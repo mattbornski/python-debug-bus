@@ -11,7 +11,7 @@ test_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe(
 src_dir = os.path.abspath(os.path.join(test_dir, '..', 'debugbus'))
 sys.path.append(src_dir)
 
-from debugbus import Client
+import debugbus
 
 def forward(lock, source, destination):
     string = ''
@@ -100,7 +100,7 @@ class ForwardingServer(object):
 def test_downed_bus():
     server = ForwardingServer()
     server.serve()
-    client = Client('redis://127.0.0.1:{}'.format(server.port))
+    client = debugbus.Client('redis://127.0.0.1:{}'.format(server.port))
 
     received = []
     def receiver(message):
@@ -129,7 +129,7 @@ def test_reconfigured_bus():
     url = 'redis://127.0.0.1:{}'.format(server.port)
     def url_getter():
         return url
-    client = Client(url_getter)
+    client = debugbus.Client(url_getter)
 
     received = []
     def receiver(message):
