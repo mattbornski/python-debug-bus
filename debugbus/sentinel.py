@@ -41,7 +41,7 @@ class RedisSentinel(BaseSentinel):
 
     def setup(self):
         self._score = time.time()
-        self._redis_client.hset(self._configuration['key'], self._score, self._backend.url)
+        self._redis_client.hset(self._configuration['key'], self._score, json.dumps(self._backend.to_json()))
 
     def takedown(self):
         self._redis_client.hdel(self._configuration['key'], self._score)
@@ -51,7 +51,7 @@ class RedisSentinel(BaseSentinel):
         if len(values) == 0:
             return None
         max_value = max([float(value) for value in values])
-        return self._redis_client.hget(self._configuration['key'], max_value).decode('utf-8')
+        return json.loads(self._redis_client.hget(self._configuration['key'], max_value).decode('utf-8'))
 
 class SSMSentinel(BaseSentinel):
     pass
